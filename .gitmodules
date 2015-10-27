@@ -1,0 +1,3 @@
+[submodule "lib/stereo_calib_lib"]
+	path = lib/stereo_calib_lib
+	url = https://github.com/nmoutinho/stereo_calib_lib.git
