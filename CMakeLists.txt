@@ -21,6 +21,14 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(OpenCV REQUIRED)
 #find_package(CUDA)
 
+catkin_package(
+#  INCLUDE_DIRS include
+#  LIBRARIES foveated_stereo_ros
+#  CATKIN_DEPENDS cv_bridge geometry_msgs message_filters roscpp sensor_msgs std_msgs tf
+#  DEPENDS system_lib
+#   CATKIN_DEPENDS message_runtime
+)
+
 ###########
 ## Build ##
 ###########
@@ -30,7 +38,6 @@ find_package(OpenCV REQUIRED)
 include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
-  #${CUDA_INCLUDE_DIRS}
 )
 
 include_directories(lib/stereo_calib_lib/include)
@@ -53,8 +60,6 @@ target_link_libraries(stereo_calibration_node
    ${OpenCV_LIBRARIES}
 )
 
-add_dependencies(stereo_calibration_node foveated_stereo_ros_gencpp)
-
 ## Declare a cpp executable
 add_executable(perfect_stereo_calibration_node src/PerfectStereoCalibrationRos.cpp)
 
@@ -64,6 +69,6 @@ target_link_libraries(perfect_stereo_calibration_node
    ${catkin_LIBRARIES}
 )
 
-add_dependencies(stereo_calibration_node foveated_stereo_ros_gencpp)
+
 
 

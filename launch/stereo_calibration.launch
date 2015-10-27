@@ -9,7 +9,7 @@
   <arg name="right_image_topic" default="/vizzy/r_camera/image_raw"/>
   <arg name="joint_states" default="/vizzy/joint_states"/>
   <!-- launch stereo_calibration -->
-  <node name="stereo_calibration" pkg="online_stereo_calibration_ros_ros" type="stereo_calibration_node" respawn="true" output="screen" >
+  <node name="stereo_calibration" pkg="online_stereo_calibration_ros" type="perfect_stereo_calibration_node" respawn="true" output="screen" >
     <rosparam file="$(find foveated_stereo_ros)/config/frames.yaml" command="load" />
     <rosparam file="$(find foveated_stereo_ros)/config/params.yaml" command="load" />
     <remap from="left_image" to="$(arg left_image_topic)"/>
