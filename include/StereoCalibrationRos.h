@@ -16,6 +16,8 @@
 using namespace cv;
 class StereoCalibrationRos
 {
+    double resize_factor;
+
     std::string left_camera_frame;
     std::string right_camera_frame;
     std::string ego_frame;

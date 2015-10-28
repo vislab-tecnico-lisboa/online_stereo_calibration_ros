@@ -1,7 +1,5 @@
 #include "StereoCalibrationRos.h"
 
-
-
 StereoCalibrationRos::StereoCalibrationRos(ros::NodeHandle & nh_, ros::NodeHandle & private_node_handle_) :
     nh(nh_),
     private_node_handle(private_node_handle_),
@@ -16,9 +14,11 @@ StereoCalibrationRos::StereoCalibrationRos(ros::NodeHandle & nh_, ros::NodeHandl
     private_node_handle.param<std::string>("left_camera_frame", left_camera_frame, "left_camera_frame");
     private_node_handle.param<std::string>("right_camera_frame", right_camera_frame, "right_camera_frame");
 
+
     private_node_handle.param<std::string>("left_camera_info_topic", left_camera_info_topic, "left_camera_info_topic");
     private_node_handle.param<std::string>("right_camera_info_topic", right_camera_info_topic, "right_camera_info_topic");
     private_node_handle.param<std::string>("joint_states_topic", joint_states_topic, "joint_states_topic");
+    private_node_handle.param("resize_factor",resize_factor,2.5);
 
     ROS_INFO_STREAM("ego_frame: "<<ego_frame);
     ROS_INFO_STREAM("left_camera_frame: "<<left_camera_frame);
@@ -27,6 +27,9 @@ StereoCalibrationRos::StereoCalibrationRos(ros::NodeHandle & nh_, ros::NodeHandl
     ROS_INFO_STREAM("left_camera_info_topic:"<<left_camera_info_topic);
     ROS_INFO_STREAM("right_camera_info_topic:"<<right_camera_info_topic);
     ROS_INFO_STREAM("joint_states_topic:"<<joint_states_topic);
+
+    ROS_INFO_STREAM("resize_factor: "<<resize_factor);
+
 
     sensor_msgs::CameraInfoConstPtr left_camera_info=ros::topic::waitForMessage<sensor_msgs::CameraInfo>(left_camera_info_topic, ros::Duration(30));
     sensor_msgs::CameraInfoConstPtr right_camera_info=ros::topic::waitForMessage<sensor_msgs::CameraInfo>(right_camera_info_topic, ros::Duration(30));
@@ -58,7 +61,6 @@ StereoCalibrationRos::StereoCalibrationRos(ros::NodeHandle & nh_, ros::NodeHandl
         return;
     }
 
-    double resize_factor = 2.0;
 
     double baseline = (double)r_l_eye_transform.getOrigin().length();
 
@@ -104,6 +106,7 @@ spherical_multiple_filter_stereo_calib_params StereoCalibrationRos::fillStereoCa
     return params;
 }
 
+// VERY IMPORTANT: SUBSCRIBE RECTIFIED IMAGES
 void StereoCalibrationRos::callback(const sensor_msgs::ImageConstPtr& left_image,
                                     const sensor_msgs::ImageConstPtr& right_image,
                                     const sensor_msgs::JointStateConstPtr& joint_states)
@@ -145,10 +148,22 @@ void StereoCalibrationRos::callback(const sensor_msgs::ImageConstPtr& left_image
     cv::Mat left_image_mat =cv_bridge::toCvCopy(left_image, "bgr8")->image;
     cv::Mat right_image_mat =cv_bridge::toCvCopy(right_image, "bgr8")->image;
 
+
+    cv::Mat left_image_resized_mat;
+    cv::Mat right_image_resized_mat;
+
+    cv::resize(left_image_mat,
+               left_image_resized_mat,
+               cv::Size(left_image_mat.cols/resize_factor,left_image_mat.rows/resize_factor));
+    cv::resize(right_image_mat,
+               right_image_resized_mat,
+               cv::Size(right_image_mat.cols/resize_factor,right_image_mat.rows/resize_factor));
+
+
     // 3. calibrate given angles
     ROS_INFO("Calibrate stereo...");
-    stereo_calibration->calibrate(left_image_mat,
-                                  right_image_mat);
+    stereo_calibration->calibrate(left_image_resized_mat,
+                                  right_image_resized_mat);
 
     ROS_INFO("Done.");
 
