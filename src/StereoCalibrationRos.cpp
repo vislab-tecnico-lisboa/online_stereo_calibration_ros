@@ -62,8 +62,8 @@ StereoCalibrationRos::StereoCalibrationRos(ros::NodeHandle & nh_, ros::NodeHandl
     }
 
 
-    double baseline = (double)r_l_eye_transform.getOrigin().length();
-
+    double baseline = (double)r_l_eye_transform.getOrigin().length()*1000.0; // in mm
+    ROS_INFO_STREAM("BASELINE:" <<baseline);
     stereo_calibration=boost::shared_ptr<spherical_multiple_filter_stereo_calib> (new spherical_multiple_filter_stereo_calib(fillStereoCalibParams(width,height,left_cam_intrinsic,right_cam_intrinsic,baseline,resize_factor)));
     left_image_sub=boost::shared_ptr<message_filters::Subscriber<sensor_msgs::Image> > (new message_filters::Subscriber<sensor_msgs::Image>(nh, "left_image", 10));
     right_image_sub=boost::shared_ptr<message_filters::Subscriber<sensor_msgs::Image> > (new message_filters::Subscriber<sensor_msgs::Image>(nh, "right_image", 10));
@@ -86,7 +86,6 @@ spherical_multiple_filter_stereo_calib_params StereoCalibrationRos::fillStereoCa
 
     spherical_multiple_filter_stereo_calib_params params;
     params.baseline = baseline;//in mm
-
     //set the parameters for the stereo calibration system
     params.left_cam_resx = width/resize_factor;
     params.left_cam_resy = height/resize_factor;
@@ -182,9 +181,9 @@ void StereoCalibrationRos::callback(const sensor_msgs::ImageConstPtr& left_image
     right_to_left_transform_stamped.transform.rotation.x=r_right_cam_to_left_cam_quaternion.at<double>(1,0);
     right_to_left_transform_stamped.transform.rotation.y=r_right_cam_to_left_cam_quaternion.at<double>(2,0);
     right_to_left_transform_stamped.transform.rotation.z=r_right_cam_to_left_cam_quaternion.at<double>(3,0);
-    right_to_left_transform_stamped.transform.translation.x=scd.t_left_cam_to_right_cam.at<double>(0,0);
-    right_to_left_transform_stamped.transform.translation.y=scd.t_left_cam_to_right_cam.at<double>(1,0);
-    right_to_left_transform_stamped.transform.translation.z=scd.t_left_cam_to_right_cam.at<double>(2,0);
+    right_to_left_transform_stamped.transform.translation.x=scd.t_left_cam_to_right_cam.at<double>(0,0)/1000.0;
+    right_to_left_transform_stamped.transform.translation.y=scd.t_left_cam_to_right_cam.at<double>(1,0)/1000.0;
+    right_to_left_transform_stamped.transform.translation.z=scd.t_left_cam_to_right_cam.at<double>(2,0)/1000.0;
 
     left_to_right_pub.publish(right_to_left_transform_stamped);
 
