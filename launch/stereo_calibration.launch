@@ -8,13 +8,25 @@
   <arg name="left_image_topic" default="/vizzy/r_camera/image_rect_color"/>
   <arg name="right_image_topic" default="/vizzy/r_camera/image_rect_color"/>
   <arg name="joint_states" default="/joint_states"/>
-  <!-- launch stereo_calibration -->
-  <node name="stereo_calibration" pkg="online_stereo_calibration_ros" type="stereo_calibration_node" respawn="true" output="screen" >
-    <rosparam file="$(find foveated_stereo_ros)/config/frames.yaml" command="load" />
-    <rosparam file="$(find foveated_stereo_ros)/config/params.yaml" command="load" />
-    <remap from="left_image" to="$(arg left_image_topic)"/>
-    <remap from="right_image" to="$(arg right_image_topic)"/>
-    <remap from="joint_states" to="$(arg joint_states)"/>
-  </node>
+  <arg name="perfect_calibration" default="true"/>
 
+  <!-- launch stereo_calibration -->
+    <group if="$(arg perfect_calibration)">
+      <node name="stereo_calibration" pkg="online_stereo_calibration_ros" type="perfect_stereo_calibration_node" respawn="true" output="screen" >
+        <rosparam file="$(find foveated_stereo_ros)/config/frames.yaml" command="load" />
+        <rosparam file="$(find foveated_stereo_ros)/config/params.yaml" command="load" />
+        <remap from="left_image" to="$(arg left_image_topic)"/>
+        <remap from="right_image" to="$(arg right_image_topic)"/>
+        <remap from="joint_states" to="$(arg joint_states)"/>
+      </node>
+    </group>
+    <group unless="$(arg perfect_calibration)">
+      <node name="stereo_calibration" pkg="online_stereo_calibration_ros" type="stereo_calibration_node" respawn="true" output="screen" >
+        <rosparam file="$(find foveated_stereo_ros)/config/frames.yaml" command="load" />
+        <rosparam file="$(find foveated_stereo_ros)/config/params.yaml" command="load" />
+        <remap from="left_image" to="$(arg left_image_topic)"/>
+        <remap from="right_image" to="$(arg right_image_topic)"/>
+        <remap from="joint_states" to="$(arg joint_states)"/>
+    </node>
+  </group>
 </launch>

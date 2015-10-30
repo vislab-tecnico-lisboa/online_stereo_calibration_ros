@@ -40,6 +40,7 @@ void PerfectStereoCalibrationRos::streamTF()
         }
         break;
     }
+    //ROS_INFO_STREAM("Found transformation from"<< right_camera_frame << " to "<< left_camera_frame);
 
     geometry_msgs::TransformStamped left_to_right_tf_msg;
     tf::transformStampedTFToMsg (r_l_eye_transform, left_to_right_tf_msg);
