@@ -5,25 +5,40 @@
   <!--<arg name="vizzy_machine_address" default="10.0.29.186"/>-->
   <!--<arg name="env-loader" default="/opt/ros/indigo/env.sh"/>-->
   <!--<machine name="$(arg vizzy_machine_name)" address="$(arg vizzy_machine_address)" env-loader="$(arg env-loader)" user="vizzy"/>-->
+
+  <arg name="manager" default=""/>
+
   <arg name="left_image_topic" default="/vizzy/r_camera/image_rect_color"/>
   <arg name="right_image_topic" default="/vizzy/r_camera/image_rect_color"/>
+
+  <arg name="left_camera_info_topic" default="/vizzy/l_camera/camera_info"/>
+  <arg name="right_camera_info_topic" default="/vizzy/r_camera/camera_info"/>
+
+  <arg name="left_stereo_camera_info_topic" default="/vizzy/stereo/l_camera/camera_info"/>
+  <arg name="right_stereo_camera_info_topic" default="/vizzy/stereo/r_camera/camera_info"/>
+
   <arg name="joint_states" default="/joint_states"/>
   <arg name="perfect_calibration" default="true"/>
 
   <!-- launch stereo_calibration -->
     <group if="$(arg perfect_calibration)">
-      <node name="stereo_calibration" pkg="online_stereo_calibration_ros" type="perfect_stereo_calibration_node" respawn="true" output="screen" >
+      <node pkg="nodelet" type="nodelet" name="stereo_calibration" args="load online_stereo_calibration_ros/PerfectStereoCalibrationRosNodelet $(arg manager)" respawn="true" output="screen">
         <rosparam file="$(find foveated_stereo_ros)/config/frames.yaml" command="load" />
         <rosparam file="$(find foveated_stereo_ros)/config/params.yaml" command="load" />
-        <remap from="left_image" to="$(arg left_image_topic)"/>
-        <remap from="right_image" to="$(arg right_image_topic)"/>
-        <remap from="joint_states" to="$(arg joint_states)"/>
+        <remap from="left_camera_info" to="$(arg left_camera_info_topic)"/>
+        <remap from="right_camera_info" to="$(arg right_camera_info_topic)"/>
+        <remap from="left_stereo_camera_info" to="$(arg left_stereo_camera_info_topic)"/>
+        <remap from="right_stereo_camera_info" to="$(arg right_stereo_camera_info_topic)"/>
       </node>
     </group>
     <group unless="$(arg perfect_calibration)">
       <node name="stereo_calibration" pkg="online_stereo_calibration_ros" type="stereo_calibration_node" respawn="true" output="screen" >
         <rosparam file="$(find foveated_stereo_ros)/config/frames.yaml" command="load" />
         <rosparam file="$(find foveated_stereo_ros)/config/params.yaml" command="load" />
+        <remap from="left_camera_info" to="$(arg left_camera_info_topic)"/>
+        <remap from="right_camera_info" to="$(arg right_camera_info_topic)"/>
+        <remap from="left_stereo_camera_info" to="$(arg left_stereo_camera_info_topic)"/>
+        <remap from="right_stereo_camera_info" to="$(arg right_stereo_camera_info_topic)"/>
         <remap from="left_image" to="$(arg left_image_topic)"/>
         <remap from="right_image" to="$(arg right_image_topic)"/>
         <remap from="joint_states" to="$(arg joint_states)"/>

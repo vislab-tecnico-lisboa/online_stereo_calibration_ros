@@ -62,6 +62,8 @@
   <run_depend>nodelet</run_depend>
 
 
-
-
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <nodelet plugin="${prefix}/online_stereo_calibration_nodelets.xml"/>
+  </export>
 </package>

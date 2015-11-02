@@ -70,5 +70,36 @@ target_link_libraries(perfect_stereo_calibration_node
 )
 
 
+#####################
+# NODELET LIBRARIES #
+#####################
+
+# Nodelet library
+add_library(perfect_stereo_calibration_nodelet src/PerfectStereoCalibrationRos.cpp src/nodelets/PerfectStereoCalibrationRosNodelet.cpp)
+target_link_libraries(perfect_stereo_calibration_nodelet
+   ${PCL_LIBRARIES}
+   ${catkin_LIBRARIES}
+   ${OpenCV_LIBRARIES})
+
+install(TARGETS perfect_stereo_calibration_nodelet
+        DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
+
+add_library(stereo_calibration_nodelet src/StereoCalibrationRos.cpp src/nodelets/StereoCalibrationRosNodelet.cpp)
+target_link_libraries(stereo_calibration_nodelet
+   ${PCL_LIBRARIES}
+   ${catkin_LIBRARIES}
+   ${OpenCV_LIBRARIES})
+
+install(TARGETS stereo_calibration_nodelet
+        DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
+
+install(FILES online_stereo_calibration_nodelets.xml
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+
+
 
 

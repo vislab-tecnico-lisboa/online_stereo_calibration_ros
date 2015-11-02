@@ -28,13 +28,20 @@ class PerfectStereoCalibrationRos
     ros::Publisher left_to_center_pub;
     tf::StampedTransform l_eye_transform;
     tf::StampedTransform r_l_eye_transform;
+
+    boost::shared_ptr<message_filters::Subscriber<sensor_msgs::CameraInfo> > right_camera_info_sub;
+    boost::shared_ptr<message_filters::Subscriber<sensor_msgs::CameraInfo> > left_camera_info_sub;
+    ros::Publisher stereo_left_camera_info_pub;
+    ros::Publisher stereo_right_camera_info_pub;
+    typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::CameraInfo, sensor_msgs::CameraInfo> MySyncPolicy;
+    boost::shared_ptr<message_filters::Synchronizer<MySyncPolicy> > sync;
+
 public:
+    void callback(const sensor_msgs::CameraInfoConstPtr & left_camera_info_msg,const sensor_msgs::CameraInfoConstPtr & right_camera_info_msg);
 
     PerfectStereoCalibrationRos();
 
     PerfectStereoCalibrationRos(ros::NodeHandle & nh_, ros::NodeHandle & private_node_handle_);
-
-    void streamTF();
 };
 
 #endif // PerfectStereoCalibrationRos_H

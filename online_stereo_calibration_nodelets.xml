@@ -1,0 +1,18 @@
+<!-- stereo driver nodelet publisher -->
+<library path="lib/libperfect_stereo_calibration_nodelet">
+  <class name="online_stereo_calibration_ros/PerfectStereoCalibrationRosNodelet" type="online_stereo_calibration_ros::PerfectStereoCalibrationRosNodelet" base_class_type="nodelet::Nodelet">
+    <description>
+      online perfect stereo calibration nodelet.
+    </description>
+  </class>
+</library>
+
+
+<library path="lib/libstereo_calibration_nodelet">
+  <class name="online_stereo_calibration_ros/StereoCalibrationRosNodelet" type="online_stereo_calibration_ros::StereoCalibrationRosNodelet" base_class_type="nodelet::Nodelet">
+    <description>
+      stereo calibration nodelet.
+    </description>
+  </class>
+</library>
+
